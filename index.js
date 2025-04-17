@@ -9,21 +9,21 @@ const app = new Koa();
 const router = new Router();
 
 // 创建Sequelize实例
-const sequelize = new Sequelize('online_blog', 'root', '2869410800', {
-  host: 'localhost',
-  dialect: 'mysql',
-  timezone: "+08:00",
-});
+// const sequelize = new Sequelize('online_blog', 'root', '2869410800', {
+//   host: 'localhost',
+//   dialect: 'mysql',
+//   timezone: "+08:00",
+// });
 
-sequelize
-  .authenticate()
-  .then(() => {
-    console.log("数据库连接成功");
-  })
-  .catch((err) => {
-    console.log(err);
-    console.log("数据库连接失败");
-  });
+// sequelize
+//   .authenticate()
+//   .then(() => {
+//     console.log("数据库连接成功");
+//   })
+//   .catch((err) => {
+//     console.log(err);
+//     console.log("数据库连接失败");
+//   });
 
   initWebsocket();
 // 使用bodyparser中间件
@@ -35,31 +35,31 @@ router.get('/', async (ctx) => {
 });
 
 // 添加一个查询数据库的路由
-router.get('/users', async (ctx) => {
-  const rows = await User.findAll();
-  ctx.body = rows;
-});
+// router.get('/users', async (ctx) => {
+//   const rows = await User.findAll();
+//   ctx.body = rows;
+// });
 
 // 定义User模型
-const User = sequelize.define('User', {
-  username: {
-    type: Sequelize.STRING,
-    allowNull: false
-  },
-  email: {
-    type: Sequelize.STRING,
-    allowNull: false,
-    unique: true
-  },
-  password: {
-    type: Sequelize.STRING,
-    allowNull: false
-  }
-}, {
-  timestamps: true,
-  createdAt: 'created_at',
-  updatedAt: false
-});
+// const User = sequelize.define('User', {
+//   username: {
+//     type: Sequelize.STRING,
+//     allowNull: false
+//   },
+//   email: {
+//     type: Sequelize.STRING,
+//     allowNull: false,
+//     unique: true
+//   },
+//   password: {
+//     type: Sequelize.STRING,
+//     allowNull: false
+//   }
+// }, {
+//   timestamps: true,
+//   createdAt: 'created_at',
+//   updatedAt: false
+// });
 
 // 使用路由中间件
 app.use(router.routes());
