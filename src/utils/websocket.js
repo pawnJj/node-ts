@@ -1,12 +1,10 @@
 const { WebSocketServer } = require("ws");
-const WebSocket = require("ws");
+const http = require("http");
 
 const initWebsocket = () => {
-    const wss = new WebSocketServer({ port: 6688 });
+    const server = http.createServer();
 
-    if (wss) {
-        console.log("websocket Initialized successfully on port: " + 6688);
-    }
+    const wss = new WebSocketServer({ server });
 
     wss.on("connection", function connection(ws, request) {
         ws.on("error", console.error);
@@ -14,13 +12,18 @@ const initWebsocket = () => {
             const message = JSON.parse(data);
             console.log("Received message => ", message);
             wss.clients.forEach(function each(client) {
-                if (client.readyState === WebSocket.OPEN) {
+                if (client.readyState === ws.OPEN) {
                     client.send(JSON.stringify(message), { binary: false });
                 }
             });
-        })
-    })
-}
+        });
+    });
+
+    const PORT = process.env.PORT || 6688;
+    server.listen(PORT, () => {
+        console.log("WebSocket initialized successfully on port: " + PORT);
+    });
+};
 
 module.exports = {
     initWebsocket,
