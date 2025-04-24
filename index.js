@@ -6,20 +6,38 @@ const { Sequelize } = require('sequelize');
 
 const { initWebsocket } = require("./src/utils/websocket");
 
+
+const logger = require("koa-logger");
+const swagger = require("./src/utils/swagger"); // 存放swagger.js的位置，可以自行配置
+const { koaSwagger } = require("koa2-swagger-ui");
+
 const app = new Koa();
-const router = new Router();
-
-
 
 
 // 使用bodyparser中间件
 app.use(bodyParser());
-router.get('/', async (ctx) => {
-  ctx.body = 'Hello Koa!';
+// router.get('/123', async (ctx) => {
+//   ctx.body = 'Hello Koa!';
+// });
+app.use(logger());
+app.use(async (ctx, next) => {
+	const start = new Date();
+	await next();
+	const ms = new Date() - start;
+	console.log(`${ctx.method} ${ctx.url} - ${ms}ms`);
 });
 
 
-app.use(router.routes()).use(router.allowedMethods());
+app.use(swagger.routes(), swagger.allowedMethods());
+// 接口文档
+app.use(
+	koaSwagger({
+		routePrefix: "/swagger", // 接口文档访问地址
+		swaggerOptions: {
+			url: "/swagger.json", // example path to json 其实就是之后swagger-jsdoc生成的文档地址
+		},
+	})
+);
 
 const server = http.createServer(app.callback());
 
@@ -77,5 +95,5 @@ initWebsocket(server);
 // 启动服务器
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, async () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+	console.log(`Server is running on http://localhost:${PORT}`);
 });
